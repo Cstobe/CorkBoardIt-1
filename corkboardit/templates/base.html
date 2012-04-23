@@ -17,7 +17,7 @@
 	<div class="navbar navbar-fixed-top">
 	  <div class="navbar-inner">
 		<div class="container">
-			<a class="brand" href="#">CorkBoardIt</a>
+			<a class="brand" href="{{ url_for('index') }}">CorkBoardIt</a>
 			{% if not session.user %}
 				{% set navigation_bar = [
 					(url_for('index'), 'home', 'Home'),

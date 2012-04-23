@@ -141,6 +141,15 @@ def add_pushpin():
                                 (request.form['corkboard'],
                                 request.form['image_url'],
                                 request.form['description']))
+                pushpin_id = cursor.lastrowid
+                if len(request.form['tags']) > 0:
+                    tags = [x.strip() for x in request.form['tags'].split(',')]
+                    for tag in list(set(tags)):
+                        cursor.execute("""INSERT INTO Tag
+                                        (`PushPin`, `Tag`)
+                                        VALUES (%s, %s)""",
+                                        (pushpin_id,
+                                        tag))
                 g.db.commit()
                 flash("PushPin has successfully been added!", "success")
                 return redirect(url_for('index'))
