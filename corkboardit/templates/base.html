@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	{% block head %}
+	<title>{% block title %}{% endblock %} - CorkBoardIt</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}" />
+	<script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+	<script src="http://code.jquery.com/jquery-1.7.min.js"></script>
+	<style type="text/css">
+	body {
+		padding-top: 60px;
+	}
+	</style>
+	{% endblock %}
+</head>
+<body>
+	<div class="navbar navbar-fixed-top">
+	  <div class="navbar-inner">
+		<div class="container">
+			<a class="brand" href="#">CorkBoardIt</a>
+			{% if not session.user %}
+				{% set navigation_bar = [
+					(url_for('index'), 'home', 'Home'),
+					(url_for('login'), 'login', 'Login')
+				] -%}
+			{% else %}
+				{% set navigation_bar = [
+					(url_for('index'), 'home', 'Home'),
+					(url_for('add_corkboard'), 'add_corkboard', 'Add CorkBoard'),
+					(url_for('logout'), 'logout', 'Logout')
+				] %}
+			{% endif %}
+			{% set active_page = active_page|default('index') -%}
+			<ul class="nav">
+			{% for href, id, caption in navigation_bar %}
+			  <li{% if id == active_page %} class="active"{% endif
+			  %}><a href="{{ href|e }}">{{ caption|e }}</a></li>
+			{% endfor %}
+			</ul>
+			{% if session.user %}
+			<ul class="nav pull-right">
+				<li><a href="#">Hey, {{ g.user.Name }}!</a></li>
+			</ul>
+			{% endif %}
+		</div>
+	  </div>
+	</div>
+    <div class="container">
+		{% with messages = get_flashed_messages(with_categories=true) %}
+			{% if messages %}
+				{% for category, message in messages %}
+					<div class="alert alert-{{ category }}">
+						{{ message }}
+					</div>
+				{% endfor %}
+				</ul>
+			{% endif %}
+		{% endwith %}
+		{% block content %}{% endblock %}
+	</div>
+</body>
+</html>
