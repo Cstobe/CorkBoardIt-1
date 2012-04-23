@@ -1,0 +1,77 @@
+{% set active_page = 'home' %}
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+	<section id="updates">
+		<div class="page-header">
+			<h1>Recent Updates</h1>
+		</div>
+		<div class="row">
+			<div class="span12">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>CorkBoard</th>
+							<th>Owner</th>
+							<th>Last Updated</th>
+							<th>Status</th>
+						</tr>
+					</thead>
+					<tbody>
+					{% for corkboard in recent_updates %}
+						<tr>
+							<td><a href="#{{ corkboard.ID }}">{{ corkboard.Title }}</td>
+							<td>{{ corkboard.Name }}</td>
+							<td>{{ corkboard.LastUpdate.strftime('%B %d, %Y - %I:%M %p') }}</td>
+							<td>{% if corkboard.Private %}<span class="label label-important">Private</span>{% else %}<span class="label label-success">Public</span>{% endif %}</td>
+						</tr>
+					{% else %}
+						<tr>
+							<td colspan="4">No CorkBoards found!</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+				<div class="well">
+					<a href="{{ url_for('add_corkboard') }}"><button class="btn btn-primary">Popular Tags</button></a>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section id="my-corkboards">
+		<div class="page-header">
+			<h1>My Corkboards</h1>
+		</div>
+		<div class="row">
+			<div class="span12">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>CorkBoard</th>
+							<th>PushPins</th>
+							<th>Status</th>
+						</tr>
+					</thead>
+					<tbody>
+					{% for corkboard in my_corkboards %}
+						<tr>
+							<td><a href="#{{ corkboard.ID }}">{{ corkboard.Title }}</td>
+							<td>{{ corkboard.PushPins }}</td>
+							<td>{% if corkboard.Private %}<span class="label label-important">Private</span>{% else %}<span class="label label-success">Public</span>{% endif %}</td>
+						</tr>
+					{% else %}
+						<tr>
+							<td colspan="4">No CorkBoards found!</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+				<div class="well">
+					<a href="{{ url_for('add_corkboard') }}"><button class="btn btn-success">Add CorkBoard</button></a>
+				</div>
+			</div>
+		</div>
+	</section>
+  </fieldset>
+</form>
+{% endblock %}

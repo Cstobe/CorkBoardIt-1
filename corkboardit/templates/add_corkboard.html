@@ -1,0 +1,46 @@
+{% set active_page = 'add_corkboard' %}
+{% extends 'base.html' %}
+{% block title %}Add CorkBoard{% endblock %}
+{% block content %}
+	<div class="page-header">
+		<h1>Add CorkBoard</h1>
+	</div>
+	<section id="add_corkboard_form">
+		<div class="row">
+			<div class="span12">
+				<form class="form-horizontal" method="post">
+					<fieldset>
+						<legend>CorkBoard Form</legend>
+						<div class="control-group">
+							<label class="control-label" for="username">CorkBoard Title</label>
+							<div class="controls">
+								<input type="text" class="input-xlarge" id="title" name="title" value="{{ request.form['title'] }}" required="required">
+							</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label" for="category">Category</label>
+							<div class="controls">
+								<select class="input-xlarge" id="category" name="category" required="required">
+								{% for category in categories %}
+									<option value="{{ category.Name }}"{% if request.form['category'] == category.Name %}selected="selected"{% endif %}>{{ category.Name }}</option>
+								{% endfor %}
+								</select>
+							</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label" for="password">Password (optional)</label>
+							<div class="controls">
+								<input type="password" class="input-xlarge" id="password" name="password">
+							</div>
+						</div>
+						<div class="form-actions">
+							<input type="submit" class="btn btn-primary" value="Add Corkboard" />
+						</div>
+					</fieldset>
+				</form>
+			</div>
+		</div>
+	</section>
+  </fieldset>
+</form>
+{% endblock %}

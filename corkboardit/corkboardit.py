@@ -50,7 +50,7 @@ def index():
     recent_updates = cursor.fetchall()
     cursor.execute("""SELECT CorkBoard.Title, COUNT(*) as PushPins, CorkBoard.Private
                 FROM `CBWithPrivate` as `CorkBoard`
-                INNER JOIN `PushPin`
+                LEFT JOIN `PushPin`
                 ON CorkBoard.ID = PushPin.CorkBoard
                 WHERE CorkBoard.Email=%s
                 GROUP BY CorkBoard.Title
@@ -96,7 +96,7 @@ def add_corkboard():
     categories = cursor.fetchall()
     if request.method == 'POST':
         match = len([category for category in categories if category['Name'] == request.form['category']])
-        if request.form['title'] is not None:
+        if match > 0 and len(request.form['title']) > 0:
             cursor.execute("""INSERT INTO CorkBoard
                             (`Title`, `Email`, `Category`)
                             VALUES (%s, %s, %s)""",
@@ -118,8 +118,34 @@ def add_corkboard():
             g.db.commit()
             flash("CorkBoard has successfully been added!", "success")
             return redirect(url_for('index'))
+        else:
+            flash("Some of your form data was invalid.", "error")
     return render_template('add_corkboard.html', categories = categories)
-    
+
+@app.route('/pushpin/add', methods=['POST', 'GET'])
+@login_required
+def add_pushpin():
+    cursor = g.db.cursor()
+    cursor.execute("""SELECT *
+                    FROM CorkBoard
+                    WHERE Email = %s""",
+                    (session.get('user')))
+    corkboards = cursor.fetchall()
+    if request.method == 'POST':
+        match = len([corkboard for corkboard in corkboards if corkboard['ID'] == request.form['category']])
+        if match > 0 and len(request.form['image_url']) > 0 and len(request.form['description']) > 0:
+            cursor.execute("""INSERT INTO PushPin
+                            (`CorkBoard`, `Link`, `Description`)
+                            VALUES (%s, %s, %s)""",
+                            (request.form['corkboard'],
+                            request.form['image_url'],
+                            request.form['description']))
+            g.db.commit()
+            flash("PushPin has successfully been added!", "success")
+            return redirect(url_for('index'))
+        else:
+            flash("Some of your form data was invalid.", "error")
+    return render_template('add_pushpin.html', corkboards = corkboards)    
 
 @app.errorhandler(404)
 def not_found(error):
