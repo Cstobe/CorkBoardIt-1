@@ -1,0 +1,46 @@
+{% set active_page = 'add_pushpin' %}
+{% extends 'base.html' %}
+{% block title %}Add PushPin{% endblock %}
+{% block content %}
+	<div class="page-header">
+		<h1>Add PushPin</h1>
+	</div>
+	<section id="add_pushpin_form">
+		<div class="row">
+			<div class="span12">
+				<form class="form-horizontal" method="post">
+					<fieldset>
+						<legend>PushPin Form</legend>
+						<div class="control-group">
+							<label class="control-label" for="username">Image URL</label>
+							<div class="controls">
+								<input type="url" class="input-xlarge" id="image_url" name="image_url" value="{{ request.form['image_url'] }}" required="required">
+							</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label" for="corkboard">CorkBoard</label>
+							<div class="controls">
+								<select class="input-xlarge" id="corkboard" name="corkboard" required="required">
+								{% for corkboard in corkboards %}
+									<option value="{{ corkboard.ID }}"{% if request.form['corkboard'] == corkboard.ID %}selected="selected"{% endif %}>{{ corkboard.Title }}</option>
+								{% endfor %}
+								</select>
+							</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label" for="password">Description</label>
+							<div class="controls">
+								<input type="text" class="input-xlarge" id="description" name="description" value="{{ request.form['description'] }}" required="required"/>
+							</div>
+						</div>
+						<div class="form-actions">
+							<input type="submit" class="btn btn-primary" value="Add PushPin" />
+						</div>
+					</fieldset>
+				</form>
+			</div>
+		</div>
+	</section>
+  </fieldset>
+</form>
+{% endblock %}

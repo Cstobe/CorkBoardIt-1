@@ -48,7 +48,7 @@ def index():
                 ORDER BY LastUpdate DESC
                 LIMIT 5""")
     recent_updates = cursor.fetchall()
-    cursor.execute("""SELECT CorkBoard.Title, COUNT(*) as PushPins, CorkBoard.Private
+    cursor.execute("""SELECT CorkBoard.Title, COUNT(PushPin.ID) as PushPins, CorkBoard.Private
                 FROM `CBWithPrivate` as `CorkBoard`
                 LEFT JOIN `PushPin`
                 ON CorkBoard.ID = PushPin.CorkBoard
@@ -132,17 +132,20 @@ def add_pushpin():
                     (session.get('user')))
     corkboards = cursor.fetchall()
     if request.method == 'POST':
-        match = len([corkboard for corkboard in corkboards if corkboard['ID'] == request.form['category']])
+        match = len([corkboard for corkboard in corkboards if corkboard['ID'] == long(request.form['corkboard'])])
         if match > 0 and len(request.form['image_url']) > 0 and len(request.form['description']) > 0:
-            cursor.execute("""INSERT INTO PushPin
-                            (`CorkBoard`, `Link`, `Description`)
-                            VALUES (%s, %s, %s)""",
-                            (request.form['corkboard'],
-                            request.form['image_url'],
-                            request.form['description']))
-            g.db.commit()
-            flash("PushPin has successfully been added!", "success")
-            return redirect(url_for('index'))
+            try:
+                cursor.execute("""INSERT INTO PushPin
+                                (`CorkBoard`, `Link`, `Description`)
+                                VALUES (%s, %s, %s)""",
+                                (request.form['corkboard'],
+                                request.form['image_url'],
+                                request.form['description']))
+                g.db.commit()
+                flash("PushPin has successfully been added!", "success")
+                return redirect(url_for('index'))
+            except MySQLdb.IntegrityError:
+                flash("You've already posted that image in this CorkBoard!", "error")
         else:
             flash("Some of your form data was invalid.", "error")
     return render_template('add_pushpin.html', corkboards = corkboards)    
